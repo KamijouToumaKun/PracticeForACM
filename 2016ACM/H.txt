@@ -1,0 +1,52 @@
+举个例子：
+(1,1)
+
+    1
+
+    2
+  0 1 0
+    0
+
+    0
+  0 2 2		4*2=8
+0 0 1 1 0 	2*1=2
+  0 0 0
+    0
+    3*1=3 3*2=6
+    			u1u2
+
+		l1u2			l1u2
+		+u1l2	u1		+u1l2
+
+l1l2	l1		1		r1		r1r2
+  
+		l1d2			r1d2
+		+d1l2	d1		+d1r2
+
+     			d1d2
+     			2
+		1				1
+2								2
+		1				1
+				2
+    这个过程可以用广搜来模拟，当然这样模拟是不行的。
+
+用动规来模拟
+count[x][y][t+1] = count[x-1][y][t](aka A) * r[t]   (aka A(x,y,t))
+					+count[x+1][y][t](aka B) * l[t] (aka B(x,y,t))
+					+count[x][y-1][t](aka C) * d[t] (aka C(x,y,t))
+					+count[x][y+1][t](aka D) * u[t] (aka D(x,y,t))
+它对sum[t+1]的贡献是 += r[t]*(x-1)A + l[t]*(x+1)B + d[t]*xC + u[t]*xD
+					+ r[t]*yA + l[t]*yB + d[t]*(y-1)C + u[t]*(y+1)D
+
+					即 (r[t]A+l[t]B+d[t]C+u[t]D)(x+y) +l[t]B-r[t]A + u[t]D-d[t]C
+所有的点是从x0-t-1 ~ x0+t+1, y0-t-1 ~ y0+t+1
+	所有点对sum[t+1]的贡献是 += 
+		(A(x,y,t)+B(x,y,t)+C(x,y,t)+D(x,y,t))(x+y) +B(x,y,t)-A(x,y,t) + D(x,y,t)-C(x,y,t)
+
+		考虑 x=x0-k 和 x=x0+k 相加
+		(A(x,y,t)+B(x,y,t)+C(x,y,t)+D(x,y,t))(x+y) +B(x,y,t)-A(x,y,t) + D(x,y,t)-C(x,y,t)
+		(A(x',y,t)+B(x',y,t)+C(x',y,t)+D(x',y,t))(x'+y) +B(x',y,t)-A(x',y,t) + D(x',y,t)-C(x',y,t)
+
+		也没有发现什么规律……
+	当然这样模拟也是不行的，毕竟1 ≤ N ≤ 10^18
